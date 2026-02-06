@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Our Services</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(120deg, #84fab0, #8fd3f4);
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            animation: fadeIn 1.5s ease-in;
+        }
+
+        h1 {
+            margin-top: 40px;
+            color: #ffffff;
+            animation: slideDown 1s ease-in-out;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: white;
+            width: 220px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.4s, box-shadow 0.4s;
+            animation: fadeUp 1.5s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0px 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .card h3 {
+            color: #333;
+        }
+
+        .card p {
+            color: #666;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background: #ff6b6b;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .back-link:hover {
+            background: #ff4757;
+            transform: scale(1.1);
+        }
+
+        /* ---------- Animations ---------- */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Our Services</h1>
+    <p style="color:white;">We provide high-quality digital solutions</p>
+
+    <div class="container">
+        <div class="card">
+            <h3>💻 Web Development</h3>
+            <p>Responsive and modern websites</p>
+        </div>
+
+        <div class="card">
+            <h3>🔗 API Development</h3>
+            <p>Secure and scalable APIs</p>
+        </div>
+
+        <div class="card">
+            <h3>🗄️ Database Design</h3>
+            <p>Efficient data management</p>
+        </div>
+
+        <div class="card">
+            <h3>⚙️ Software Solutions</h3>
+            <p>Custom software for businesses</p>
+        </div>
+    </div>
+
+    <br>
+    <a class="back-link" href="/">⬅ Back to Home</a>
+
+</body>
+</html>
