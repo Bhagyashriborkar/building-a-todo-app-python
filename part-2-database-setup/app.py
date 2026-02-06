@@ -8,76 +8,154 @@
 #   3. How to query the database
 # =============================================================================
 
+
+
 from flask import Flask, render_template
+import os
 from models import db, User, Todo, init_db
 
 app = Flask(__name__)
 
 # Database configuration
-# 'sqlite:///todo.db' creates a file called 'todo.db' in instance/ folder
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize the database
-init_db(app)
+db.init_app(app)
 
+# =============================================================================
+# DATABASE SETUP
+# =============================================================================
+def setup_database():
+    """Setup database with fresh tables"""
+    print("Setting up database...")
+    
+    # Create instance folder if it doesn't exist
+    instance_path = 'instance'
+    if not os.path.exists(instance_path):
+        os.makedirs(instance_path)
+        print(f"Created {instance_path} folder")
+    
+    # Create all tables
+    with app.app_context():
+        db.create_all()
+        print("✓ Database tables created successfully")
+        
+        # Create test data if no users exist
+        if User.query.count() == 0:
+            create_test_data()
+    
+    return True
+
+def create_test_data():
+    """Create sample data for testing"""
+    print("Creating test data...")
+    
+    try:
+        # Create users with phone numbers
+        user1 = User(
+            username='alice', 
+            email='alice@example.com', 
+            password_hash='temp123', 
+            phone_no='1111111111'
+        )
+        user2 = User(
+            username='bob', 
+            email='bob@example.com', 
+            password_hash='temp456', 
+            phone_no='2222222222'
+        )
+        user3 = User(
+            username='charlie', 
+            email='charlie@example.com', 
+            password_hash='temp789', 
+            phone_no='3333333333'
+        )
+        
+        db.session.add_all([user1, user2, user3])
+        db.session.commit()
+        print(" 3 users created")
+
+        # Create todos
+        todo1 = Todo(task_content='Learn Flask', user_id=user1.id)
+        todo2 = Todo(task_content='Learn SQLAlchemy', user_id=user1.id)
+        todo3 = Todo(task_content='Build Todo App', user_id=user2.id)
+        todo4 = Todo(task_content='Test Database', user_id=user3.id)
+        todo5 = Todo(task_content='Deploy Application', user_id=user3.id, is_completed=True)
+
+        db.session.add_all([todo1, todo2, todo3, todo4, todo5])
+        db.session.commit()
+        print(" 5 todos created")
+        
+    except Exception as e:
+        print(f"Error creating test data: {e}")
+        db.session.rollback()
 
 # =============================================================================
 # ROUTES
 # =============================================================================
-
 @app.route('/')
 def home():
     """Home page"""
     return render_template('index.html')
 
-
 @app.route('/test-db')
 def test_db():
-    """
-    Test route to verify database is working.
-    Creates a test user and todo if they don't exist.
-    """
-    # Check if test user exists
-    user = User.query.filter_by(username='testuser').first()
-    print(user)
+    """Test database page"""
+    try:
+        with app.app_context():
+            all_users = User.query.all()
+            all_todos = Todo.query.all()
+            user_count = User.query.count()
+            
+            print(f"Found {user_count} users and {len(all_todos)} todos")
+            
+            return render_template(
+                'test_db.html',
+                users=all_users,
+                todos=all_todos,
+                user_count=user_count
+            )
+    except Exception as e:
+        return f"Error: {str(e)}", 500
 
-    if not user:
-        # Create test user
-        user = User(
-            username='testuser',
-            email='test@example.com',
-            password_hash='temporary'
-        )
-        db.session.add(user)
-        db.session.commit()
-
-        # Create test todo
-        todo = Todo(
-            task_content='Learn SQLAlchemy',
-            user_id=user.id
-        )
-        db.session.add(todo)
-        db.session.commit()
-
-    # Get all users and todos for display
-    all_users = User.query.all()
-    all_todos = Todo.query.all()
-
-    return render_template('test_db.html', users=all_users, todos=all_todos)
-
+@app.route('/reset-db')
+def reset_db():
+    """Reset database (for testing)"""
+    with app.app_context():
+        # Drop all tables
+        db.drop_all()
+        print("All tables dropped")
+        
+        # Recreate tables
+        db.create_all()
+        print("All tables recreated")
+        
+        # Create test data
+        create_test_data()
+        
+    return "Database reset successfully! <a href='/test-db'>View Database</a>"
 
 # =============================================================================
 # RUN THE SERVER
 # =============================================================================
 if __name__ == '__main__':
-    print("\n" + "="*50)
-    print("  Part 2: Database Setup")
-    print("  Open: http://127.0.0.1:5000")
-    print("  Test DB: http://127.0.0.1:5000/test-db")
-    print("="*50 + "\n")
-    app.run(debug=True)
-
+    # Setup database before running
+    setup_database()
+    
+    print("\n" + "="*60)
+    print("   TODO APP - PART 2: DATABASE SETUP")
+    print("="*60)
+    print("  Database: SQLite with phone_no column")
+    print("   Models: Users, Todos with relationships")
+    print("  Test Data: 3 users, 5 todos created")
+    print("="*60)
+    print("  Home Page:    http://127.0.0.1:5000")
+    print("   Test DB:      http://127.0.0.1:5000/test-db")
+    print("  Reset DB:     http://127.0.0.1:5000/reset-db")
+    print("="*60 + "\n")
+    
+    app.run(debug=True, port=5000)
 
 # ============================================
 # SELF-STUDY QUESTIONS

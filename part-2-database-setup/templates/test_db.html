@@ -22,6 +22,12 @@
                     <h4>Database is working!</h4>
                     <p class="mb-0">Data is being stored in <code>instance/todo.db</code></p>
                 </div>
+                <h3>Query Results</h3>
+               <p><strong>Total Users:</strong> {{ user_count }}</p>
+               
+
+                
+
 
                 <!-- Users Table -->
                 <div class="card shadow mb-4">
@@ -37,6 +43,7 @@
                                     <th>Email</th>
                                     <th>Is Admin</th>
                                     <th>Todo Count</th>
+                                    <th>Phone_no</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -47,12 +54,18 @@
                                     <td>{{ user.email }}</td>
                                     <td>{{ user.is_admin }}</td>
                                     <td>{{ user.todos|length }}</td>
+                                    <td>{{ user.phone_no }}</td>
+
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
+        
+
+
+
 
                 <!-- Todos Table -->
                 <div class="card shadow mb-4">
@@ -68,6 +81,7 @@
                                     <th>Completed</th>
                                     <th>User ID</th>
                                     <th>Owner</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody>
@@ -77,13 +91,17 @@
                                     <td>{{ todo.task_content }}</td>
                                     <td>{{ todo.is_completed }}</td>
                                     <td>{{ todo.user_id }}</td>
-                                    <td>{{ todo.owner.username }}</td>
+                                    <td>{{ todo.user.username }}</td>
+                                  <td>
+ 
+
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
+               
 
                 <a href="/" class="btn btn-primary">Back to Home</a>
 

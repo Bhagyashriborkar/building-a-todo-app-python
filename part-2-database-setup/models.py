@@ -1,21 +1,8 @@
-# =============================================================================
-# Part 2: Database Models
-# =============================================================================
-# Models define the structure of our database tables.
-# Each class = one table in the database.
-# =============================================================================
-
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-
-# =============================================================================
-# USER MODEL
-# =============================================================================
-# This creates a 'users' table with columns:
-# id, username, email, password_hash, is_admin
-
+# ================= USER MODEL =================
 class User(db.Model):
     __tablename__ = 'users'
 
@@ -24,20 +11,30 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
+    phone_no = db.Column(db.String(20))   
 
-    # Relationship: One user can have many todos
-    todos = db.relationship('Todo', backref='owner', lazy=True)
+    # One User → Many Todos
+    todos = db.relationship('Todo', backref='user', lazy=True)
+
+    # One User → Many Phones
+    phones = db.relationship('Phone', backref='owner', lazy=True)
 
     def __repr__(self):
         return f'<User {self.username}>'
 
+# ================= PHONE MODEL =================
+class Phone(db.Model):
+    __tablename__ = 'phones'
 
-# =============================================================================
-# TODO MODEL
-# =============================================================================
-# This creates a 'todos' table with columns:
-# id, task_content, is_completed, user_id
+    id = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.String(20), nullable=False)
+    contact_name = db.Column(db.String(100), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
+    def __repr__(self):
+        return f'<Phone {self.number}>'
+
+# ================= TODO MODEL =================
 class Todo(db.Model):
     __tablename__ = 'todos'
 
@@ -49,12 +46,8 @@ class Todo(db.Model):
     def __repr__(self):
         return f'<Todo {self.task_content[:20]}>'
 
-
-# =============================================================================
-# INITIALIZE DATABASE
-# =============================================================================
+# ============== INIT DATABASE ===============
 def init_db(app):
-    """Connect database to Flask app and create tables."""
     db.init_app(app)
     with app.app_context():
         db.create_all()
