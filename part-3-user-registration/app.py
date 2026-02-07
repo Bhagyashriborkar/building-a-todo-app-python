@@ -61,18 +61,32 @@ def api_register():
         return jsonify({'error': 'No data provided'}), 400
 
     username = data.get('username',None)
+    
+    if not username.isalnum():
+      return jsonify({'error': 'Username must contain only letters and numbers'}), 400
     print(username)
+    
     email = data.get('email', None)
+    
+    if '@' not in email:
+     return jsonify({'error': 'Invalid email format'}), 400
     print(email)
+    
     password = data.get('password', None)
+   
+    if len(password) < 6:
+        return jsonify({'error': 'Password must be at least 6 characters long'}), 400
+
     print(password)
 
     if not username:
         print('username is missing')
         return jsonify({'error': 'Username is required'}), 400
+    
     if not email:
         print('email is missing')
         return jsonify({'error': 'Email is required'}), 400
+    
     if not password:
         print('password is missing')
         return jsonify({'error': 'Password is required'}), 400
